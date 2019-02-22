@@ -61,6 +61,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Пользователь {0} вышел из системы..
+        /// </summary>
+        public static string AccountExitMessage {
+            get {
+                return ResourceManager.GetString("AccountExitMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Не удалось получить HttpContext..
         /// </summary>
         public static string AccountHttpContextError {

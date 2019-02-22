@@ -12,7 +12,7 @@
             $('#queue-info').click(function (e) {
 
                 $.ajax({
-                    url: '/Home/CheckQueueStatus',
+                    url: '/Home/GetTicketStatus',
                     type: 'GET',
                     success: function (data) {
                         $('#queue-info h4').text(data);

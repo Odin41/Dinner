@@ -95,6 +95,7 @@ namespace Dinner.Controllers
         {
             if (AuthenticationManager != null)
             {
+                logger.Info(string.Format(Resources.Resource.AccountExitMessage, AuthenticationManager.User.Identity.Name));
                 AuthenticationManager.SignOut();
             }
             return RedirectToAction("Login");
