@@ -1,0 +1,43 @@
+﻿<div class="row">
+    <a class="take-queue-any" href="#">@Resources.Resource.TakeQueue</a>
+</div>
+
+<div class="row">
+    <h4>@Resources.Resource.TakeQueue</h4>
+
+    @helper RoomsList(IEnumerable<Dinner.Models.Room> rooms)
+    {
+
+        <ul>
+            @foreach (Dinner.Models.Room r in rooms)
+            {
+                <li>
+                    <a class="take-queue-room" href="#" data-roomid=@r.Id>@r.Name</a>
+                </li>
+            }
+        </ul>
+    }
+
+    @helper DevicesList(IEnumerable<Dinner.Models.Device> devices)
+    {
+
+        <ul>
+            @foreach (Dinner.Models.Device d in devices)
+            {
+                <li>
+                    <a class="take-queue-device" href="#" data-deviceid=@d.Id>@d.Name @d.Room.Name</a>
+                </li>
+            }
+        </ul>
+    }
+
+
+
+    <h5>В комнату:</h5>
+
+    @RoomsList(ViewBag.rooms)
+
+    <h5>К микроволновке:</h5>
+    @DevicesList(ViewBag.devices)
+</div>
+

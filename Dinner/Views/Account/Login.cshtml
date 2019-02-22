@@ -1,0 +1,41 @@
+﻿@model Dinner.Models.LoginModel
+@{
+    ViewBag.Title = @Resources.Resource.LoginPageTitle;
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div>
+        <h4>@Resources.Resource.LoginPageTitle</h4>
+        <hr />
+        @Html.ValidationSummary()
+        <input type="hidden" name="returnUrl" value="@ViewBag.returnUrl" />
+
+        <div>
+            <div>
+                @Resources.Resource.Email
+            </div>
+            <div>
+                @Html.EditorFor(x => x.Email)
+            </div>
+        </div>
+
+        <div>
+            <div>
+                @Resources.Resource.Password
+            </div>
+            <div> @Html.EditorFor(x => x.Password)</div>
+        </div>
+        <div>
+            <div>
+                <input type="submit" value="@Resources.Resource.EnterButtonLabel" />
+            </div>
+        </div>
+
+    </div>
+
+}
+
+

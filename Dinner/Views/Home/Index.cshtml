@@ -1,0 +1,66 @@
+﻿@{
+    ViewBag.Title = @Resources.Resource.HomePageTitle;
+}
+
+<div class="row">
+    @Html.Partial("QueueInfo")
+    @Html.Partial("QueueManager")
+</div>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#queue-info').click(function (e) {
+
+                $.ajax({
+                    url: '/Home/CheckQueueStatus',
+                    type: 'GET',
+                    success: function (data) {
+                        $('#queue-info h4').text(data);
+                    }
+                });
+                e.preventDefault();
+                e.stopPropagation();
+            });
+
+            $('.take-queue-any').click(function (e) {
+                TakeQueue('/Home/TakeAnyQueue', {});
+                e.stopPropagation();
+                e.preventDefault();
+            });
+
+
+
+            $('.take-queue-room').click(function (e) {
+                var data = {
+                    roomid: $(this).attr("data-roomid")
+                };
+                TakeQueue('/Home/TakeQueueToRoom',
+                    data);
+                e.stopPropagation();
+                e.preventDefault();
+            });
+
+            $('.take-queue-device').click(function (e) {
+                var data = {
+                    deviceid: $(this).attr("data-deviceid")
+                };
+                TakeQueue('/Home/TakeQueueToDevice',
+                    data);
+                e.stopPropagation();
+                e.preventDefault();
+            });
+
+            function TakeQueue(url, data) {
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: data,
+                    success: function (data) {
+                        $('#queue-info h4').text(data);
+                    }
+                });
+            }
+        });
+
+    </script>
+}
