@@ -217,7 +217,7 @@ namespace Dinner.Controllers
                 {
                     logger.Info("Получение идентификатора устройства с минимальным количеством открытых билетов.");
                     device = repo.GetDeviceId();
-                    if (deviceId > 0)
+                    if (device > 0)
                     {
                         logger.Info("Устройства с минимальным количеством открытых билетов успешно получено. Номер устройства [ " + deviceId + " ] .");
                     }
@@ -232,7 +232,7 @@ namespace Dinner.Controllers
                 {
                     logger.Info("Получение идентификатора устройства с минимальным количеством открытых билетов в комнате [ " + roomId + " ]");
                     device = repo.GetDeviceIdByRoom(roomId);
-                    if (deviceId > 0)
+                    if (device > 0)
                     {
                         logger.Info("Устройства с минимальным количеством открытых билетов в комнате [ " + roomId + " ] успешно получено. Номер устройства [ " + deviceId + " ] .");
                     }
@@ -245,7 +245,7 @@ namespace Dinner.Controllers
                 //Встать в очередь к определенному устройству в комнате
                 if (roomId < 0 && deviceId > 0)
                 {
-                    if (deviceId > 0)
+                    if (device > 0)
                     {
                         device = deviceId;
                     }
@@ -256,7 +256,7 @@ namespace Dinner.Controllers
                     }
                 }
 
-                if (deviceId > 0)
+                if (device > 0)
                 {
                     logger.Error("Подготовка к записи в базу данных нового билета для пользователя: " + userName + ".");
                     logger.Info("Получение объекта ApplicationUser для учетной записи: " + userName + ".");
