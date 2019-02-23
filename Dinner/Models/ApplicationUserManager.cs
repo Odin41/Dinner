@@ -13,9 +13,12 @@ namespace Dinner.Models
     {
         public ApplicationUserManager(IUserStore<ApplicationUser> store) : base(store)
         {
+            UserValidator = new UserValidator<ApplicationUser>(this)
+            {
+                AllowOnlyAlphanumericUserNames = false,
+                RequireUniqueEmail = true
+            };
         }
-
-
         public static ApplicationUserManager Create(IdentityFactoryOptions<ApplicationUserManager> options, IOwinContext context)
         {
             ApplicationContext db = context.Get<ApplicationContext>();

@@ -21,6 +21,16 @@ namespace Dinner.Controllers
 
         IRepository repo;
 
+        string UserName
+        {
+            get
+            {
+                return HttpContext?.User.Identity.Name;
+            }
+        }
+
+
+
         public HomeController()
         {
             repo = new SQLRepository();
@@ -73,11 +83,7 @@ namespace Dinner.Controllers
             return View("Index");
         }
 
-        private ActionResult RedirectToLogout()
-        {
-            return RedirectToAction("Logout", "Account");
-        }
-
+        [HttpGet]
         private ActionResult ShowErrorPage(string message, string controllerName, string action)
         {
             logger.Error(message);
@@ -87,28 +93,25 @@ namespace Dinner.Controllers
         /// <summary>
         /// Получение активного билета для пользователя
         /// </summary>
-        /// <returns>Сообщение стоит/не стоит в очереди пользователь. В случае если стоит указывается куда занята очередь.</returns>
-        private async Task<Ticket> GetTicketForUser()
+        /// <returns>Билет пользователя.</returns>
+        public async Task<Ticket> GetTicketForUser()
         {
-            string userName = HttpContext.User.Identity.Name;
-            logger.Info("Проверка наличия билета для пользователя: " + userName + ".");
-            logger.Info("Получение объекта ApplicationUser для учетной записи: " + userName + ".");
-            ApplicationUser appUser = await repo.GetUserAsync(userName);
-            logger.Info("Объект ApplicationUser успешно получен: " + userName + ".");
             Ticket resultTicket = null;
-            if (appUser != null)
+            try
             {
-                logger.Info("Получение объекта Ticket для пользователя: " + userName + ".");
-                resultTicket = await repo.GetUserTicketAsync(appUser);
-
-                if (resultTicket != null)
+                string userName = UserName;
+                logger.Info("Проверка наличия билета для пользователя: " + userName + ".");
+                ApplicationUser appUser = await repo.GetUserAsync(userName);
+                logger.Info("Объект ApplicationUser успешно получен: " + userName + ".");
+                
+                if (appUser != null)
                 {
-                    logger.Info("Объект Ticket для пользователя: " + userName + " успешно получен.");
+                    resultTicket = await repo.GetUserTicketAsync(appUser);
                 }
-                else
-                {
-                    logger.Info("Объект Ticket для пользователя: " + userName + " отсутствует.");
-                }
+            }
+            catch(Exception ex)
+            {
+                ShowErrorPage("Ошибка выполнения метода получения билета для пользователя." + ex.Message, "Home", "GetTicketForUser");
             }
             return resultTicket;
         }
@@ -122,7 +125,6 @@ namespace Dinner.Controllers
         public async Task<string> GetTicketStatus()
         {
             Ticket ticket = await GetTicketForUser();
-            string userName = HttpContext.User.Identity.Name;
             string result = "";
             if (ticket != null)
             {
@@ -132,7 +134,7 @@ namespace Dinner.Controllers
             }
             else
             {
-                logger.Info("Объект Ticket для пользователя: " + userName + " отсутствует.");
+                logger.Info("Объект Ticket для пользователя: " + UserName + " отсутствует.");
                 result = Resources.Resource.CheckQueueStatusNotFind;
                 logger.Info(result);
             }
@@ -146,17 +148,25 @@ namespace Dinner.Controllers
         /// <returns></returns>
         private async Task<int> GetTicketNumberInQueue(Ticket ticket)
         {
-            if (ticket == null)
+            int count = -1;
+            try
             {
-                ticket = await GetTicketForUser();
+                if (ticket == null)
+                {
+                    ticket = await GetTicketForUser();
+                }
+                string userName = UserName;
+                logger.Info("Получение номера в очереди для пользователя: " + userName + ".");
+                count = await repo.GetNumberInQueueAsync(ticket);
+                logger.Info("Номер пользователя: " + userName + " в очереди успешно получен.");
+                if (count < 1)
+                {
+                    logger.Warn("Номер пользователя в очереди меньше 1.");
+                }
             }
-            string userName = HttpContext.User.Identity.Name;
-            logger.Info("Получение номера в очереди для пользователя: " + userName + ".");
-            int count = await repo.GetNumberInQueueAsync(ticket);
-            logger.Info("Номер пользователя: " + userName + " в очереди успешно получен.");
-            if (count < 1)
+            catch (Exception ex)
             {
-                logger.Warn("Номер пользователя в очереди меньше 1.");
+                ShowErrorPage("Ошибка выполнения метода получение номера в очереди к устройству." + ex.Message, "Home", "GetTicketNumberInQueue");
             }
             return count;
         }
@@ -169,8 +179,7 @@ namespace Dinner.Controllers
         [HttpPost]
         public async Task<string> TakeAnyQueue()
         {
-            string userName = HttpContext.User.Identity.Name;
-            logger.Info("Пользователь: " + userName + " хочет занять очередь к любому устройству.");
+            logger.Info("Пользователь: " + UserName + " хочет занять очередь к любому устройству.");
             return await TakeQueue(-1, -1);
         }
 
@@ -183,8 +192,7 @@ namespace Dinner.Controllers
         [HttpPost]
         public async Task<string> TakeQueueToRoom(int roomId)
         {
-            string userName = HttpContext.User.Identity.Name;
-            logger.Info("Пользователь: " + userName + " хочет занять очередь к любому устройству в комнате с идентификатором [ " + roomId + " ]");
+            logger.Info("Пользователь: " + UserName + " хочет занять очередь к любому устройству в комнате с идентификатором [ " + roomId + " ]");
             return await TakeQueue(roomId, -1);
         }
 
@@ -197,8 +205,7 @@ namespace Dinner.Controllers
         [HttpPost]
         public async Task<string> TakeQueueToDevice(int deviceid)
         {
-            string userName = HttpContext.User.Identity.Name;
-            logger.Info("Пользователь: " + userName + " хочет занять очередь к устройству с идентификатором [ " + deviceid + " ]");
+            logger.Info("Пользователь: " + UserName + " хочет занять очередь к устройству с идентификатором [ " + deviceid + " ]");
             return await TakeQueue(-1, deviceid);
         }
 
@@ -206,85 +213,86 @@ namespace Dinner.Controllers
         [HttpPost]
         public async Task<string> TakeQueue(int roomId, int deviceId)
         {
-            string userName = HttpContext.User.Identity.Name;
-            Ticket ticket = await GetTicketForUser();
-            if (ticket == null)
+            try
             {
-                int device = -1;
-                //Встать в любую очередь 
-                if (roomId < 0 && deviceId < 0)
+                Ticket ticket = await GetTicketForUser();
+
+                if (ticket == null)
                 {
-                    logger.Info("Получение идентификатора устройства с минимальным количеством открытых билетов.");
-                    device = repo.GetDeviceId();
+                    int device = -1;
+                    //Встать в любую очередь 
+                    if (roomId < 0 && deviceId < 0)
+                    {
+                        logger.Info("Получение идентификатора устройства с минимальным количеством открытых билетов.");
+                        device = repo.GetDeviceId();
+                        if (device > 0)
+                        {
+                            logger.Info("Устройства с минимальным количеством открытых билетов успешно получено. Номер устройства [ " + deviceId + " ] .");
+                        }
+                        else
+                        {
+                            logger.Error("Ошибка получения устройства с минимальным количеством открытых билетов.");
+                        }
+                    }
+
+                    //Встать в очередь к любому устройству в комнате
+                    if (roomId > 0 && deviceId < 0)
+                    {
+                        logger.Info("Получение идентификатора устройства с минимальным количеством открытых билетов в комнате [ " + roomId + " ]");
+                        device = repo.GetDeviceIdByRoom(roomId);
+                        if (device > 0)
+                        {
+                            logger.Info("Устройства с минимальным количеством открытых билетов в комнате [ " + roomId + " ] успешно получено. Номер устройства [ " + deviceId + " ] .");
+                        }
+                        else
+                        {
+                            logger.Error("Ошибка получения устройства с минимальным количеством открытых билетов для комнаты [ " + roomId + " ].");
+                        }
+                    }
+
+                    //Встать в очередь к определенному устройству в комнате
+                    if (roomId < 0 && deviceId > 0)
+                    {
+                        if (device > 0)
+                        {
+                            device = deviceId;
+                        }
+                        else
+                        {
+                            logger.Error("Номер устройства не может быть меньше 1.");
+                            RedirectToAction("Index");
+                        }
+                    }
+
                     if (device > 0)
                     {
-                        logger.Info("Устройства с минимальным количеством открытых билетов успешно получено. Номер устройства [ " + deviceId + " ] .");
-                    }
-                    else
-                    {
-                        logger.Error("Ошибка получения устройства с минимальным количеством открытых билетов.");
-                    }
-                }
+                        string userName = UserName;
+                        logger.Error("Подготовка к записи в базу данных нового билета для пользователя: " + userName + ".");
+                        logger.Info("Получение объекта ApplicationUser для учетной записи: " + userName + ".");
+                        ApplicationUser appUser = await repo.GetUserAsync(userName);
+                        DateTime createTime = DateTime.Now;
 
-                //Встать в очередь к любому устройству в комнате
-                if (roomId > 0 && deviceId < 0)
-                {
-                    logger.Info("Получение идентификатора устройства с минимальным количеством открытых билетов в комнате [ " + roomId + " ]");
-                    device = repo.GetDeviceIdByRoom(roomId);
-                    if (device > 0)
-                    {
-                        logger.Info("Устройства с минимальным количеством открытых билетов в комнате [ " + roomId + " ] успешно получено. Номер устройства [ " + deviceId + " ] .");
-                    }
-                    else
-                    {
-                        logger.Error("Ошибка получения устройства с минимальным количеством открытых билетов для комнаты [ " + roomId + " ].");
-                    }
-                }
+                        logger.Info("Создание билета с параметрами : DeviceId=" + device + ", UserId=" + appUser.Id + ", CreateTime=" + createTime + " .");
+                        Ticket createdTicket = new Ticket()
+                        {
+                            DeviceId = device,
+                            UserId = appUser.Id,
+                            CreateTime = DateTime.Now
+                        };
 
-                //Встать в очередь к определенному устройству в комнате
-                if (roomId < 0 && deviceId > 0)
-                {
-                    if (device > 0)
-                    {
-                        device = deviceId;
-                    }
-                    else
-                    {
-                        logger.Error("Номер устройства не может быть меньше 1.");
-                        RedirectToAction("Index");
-                    }
-                }
 
-                if (device > 0)
-                {
-                    logger.Error("Подготовка к записи в базу данных нового билета для пользователя: " + userName + ".");
-                    logger.Info("Получение объекта ApplicationUser для учетной записи: " + userName + ".");
-                    ApplicationUser appUser = await repo.GetUserAsync(userName);
-                    DateTime createTime = DateTime.Now;
-
-                    logger.Info("Создание билета с параметрами : DeviceId=" + device + ", UserId="+ appUser.Id+", CreateTime="+ createTime + " .");
-                    Ticket createdTicket = new Ticket()
-                    {
-                        DeviceId = device,
-                        UserId = appUser.Id,
-                        CreateTime = DateTime.Now
-                    };
-
-                    try
-                    {
                         logger.Info("Создание нового билета в базе.");
                         repo.CreateTicket(createdTicket);
                         repo.Save();
                     }
-                    catch (Exception e)
-                    {
-                        ShowErrorPage("Ошибка сохранние билета в базу.", "HomeController", "TakeQueue");
-                    }
                 }
             }
+            catch (Exception e)
+            {
+                ShowErrorPage(e.Message, "HomeController", "TakeQueue");
+            }
 
-
-            return await GetTicketStatus(); 
+            return await GetTicketStatus();
         }
 
 

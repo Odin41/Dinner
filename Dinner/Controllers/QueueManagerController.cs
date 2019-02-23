@@ -34,10 +34,8 @@ namespace Dinner.Controllers
         public ActionResult Index()
         {
             logger.Info("Получение страницы управления билетами.");
-            logger.Info("Получение связанного списка открытых билетов с устройствами и комнатами.");
             var tickets = repo.GetAllOpenTickets();
 
-            logger.Info("Получение авторизованного пользователя для отображения в меню.");
             ViewBag.userName = HttpContext.User.Identity.Name;
 
             logger.Info("Отображение страницы со сформированной таблицей.");
