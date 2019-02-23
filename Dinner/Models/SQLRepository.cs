@@ -21,15 +21,13 @@ namespace Dinner.Models
         public void CreateTicket(Ticket ticket)
         {
             db.Tickets.Add(ticket);
-            db.SaveChanges();
         }
 
         public void Dispose()
         {
             db.Dispose();
         }
-
-        
+       
 
         public IEnumerable<Device> GetDevices()
         {
@@ -208,5 +206,43 @@ namespace Dinner.Models
         {
             return await GetDeviceWithMinimumOpenTicketsAsync(id);
         }
+
+        public void Save()
+        {
+            logger.Info("Сохранение всех изменений в базе.");
+            try
+            {
+                db.SaveChanges();
+                logger.Info("Сохранение всех изменений в базе прошло успешно.");
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Сохранение всех изменений в базе прошло с ошибкой.");
+            }
+        }
+
+        public IQueryable<Ticket> GetAllOpenTickets()
+        {
+            var tickets = db.Tickets.Include(t => t.Device)
+                                    .Include(d => d.Device.Room)
+                                    .Include(u => u.User)
+                               .Where(t => t.CloseTime == null);
+            return tickets;
+
+        }
+
+        public void CloseTicket(int id)
+        {
+            db.Tickets.Find(id).CloseTime = DateTime.Now;
+        }
+
+        public async Task<int> CloseTicketAsync(int id)
+        {
+            var ticket = await db.Tickets.FindAsync(id);
+            ticket.CloseTime = DateTime.Now;
+            return id;
+        }
+
+
     }
 }

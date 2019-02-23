@@ -17,7 +17,6 @@ namespace Dinner.Controllers
     [Culture]
     public class HomeController : Controller
     {
-        ///ApplicationContext db = new ApplicationContext();
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
         IRepository repo;
@@ -273,9 +272,9 @@ namespace Dinner.Controllers
 
                     try
                     {
-                        logger.Info("Сохранние билета в базу.");
+                        logger.Info("Создание нового билета в базе.");
                         repo.CreateTicket(createdTicket);
-                        logger.Info("Билет успешно сохранен в базу.");
+                        repo.Save();
                     }
                     catch (Exception e)
                     {

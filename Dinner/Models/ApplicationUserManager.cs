@@ -22,5 +22,6 @@ namespace Dinner.Models
             ApplicationUserManager manager = new ApplicationUserManager(new UserStore<ApplicationUser>(db));
             return manager;
         }
+
     }
 }

@@ -7,6 +7,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Data.Entity;
 using Dinner.Filters;
+using NLog;
 
 namespace Dinner.Controllers
 {
@@ -14,25 +15,41 @@ namespace Dinner.Controllers
     public class QueueManagerController : Controller
     {
         ApplicationContext db = new ApplicationContext();
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+
+        IRepository repo;
+
+        public QueueManagerController(IRepository r)
+        {
+            repo = r;
+        }
+
+        public QueueManagerController()
+        {
+            repo = new SQLRepository();
+        }
+
 
         [HttpGet]
         public ActionResult Index()
         {
-            var tickets = db.Tickets.Include(t=>t.Device)
-                                    .Include(d=>d.Device.Room)
-                                    .Include(u => u.User)
-                               .Where(t => t.CloseTime == null);
+            logger.Info("Получение страницы управления билетами.");
+            logger.Info("Получение связанного списка открытых билетов с устройствами и комнатами.");
+            var tickets = repo.GetAllOpenTickets();
 
+            logger.Info("Получение авторизованного пользователя для отображения в меню.");
             ViewBag.userName = HttpContext.User.Identity.Name;
 
-            return View("Index", tickets.ToArray());
+            logger.Info("Отображение страницы со сформированной таблицей.");
+            return View("Index", tickets.ToList());
         }
 
         [HttpGet]
-        public ActionResult CloseTicket(int id)
+        public async Task<ActionResult> CloseTicket(int id)
         {
-            db.Tickets.Find(id).CloseTime = DateTime.Now;
-            db.SaveChanges();
+            logger.Info("Закрытие билета.");
+            int x = await repo.CloseTicketAsync(id);
+            repo.Save();
             return Index();
         }
 

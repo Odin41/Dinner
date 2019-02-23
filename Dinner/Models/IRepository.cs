@@ -56,6 +56,19 @@ namespace Dinner.Models
         void CreateTicket(Ticket ticket);
 
         /// <summary>
+        /// Закрытие билета по его идентификатору
+        /// </summary>
+        /// <param name="id">Идентификатор билета</param>
+        void CloseTicket(int id);
+
+        /// <summary>
+        /// Закрытие билета по его идентификатору асинхронно
+        /// </summary>
+        /// <param name="id">Идентификатор билета, который надо закрыть</param>
+        /// <returns>Идентификатор закрытого билета </returns>
+        Task<int> CloseTicketAsync(int id);
+
+        /// <summary>
         /// Получение количества незакрытых билетов перед указаным билетом к устройству указанному в билете
         /// </summary>
         /// <param name="ticket">Билет для которого идет проверка</param>
@@ -95,5 +108,18 @@ namespace Dinner.Models
         /// <param name="id">Идентификатор комнаты для фильтрации просматриваемых устройств</param>
         /// <returns>Идентификатор устройства</returns>
         Task<int> GetDeviceIdByRoomAsync(int id);
+
+        /// <summary>
+        /// Сохранение всех изменений в базу
+        /// </summary>
+        void Save();
+
+
+        /// <summary>
+        /// Получение связанной таблицы открытых билетов с устройствами, комнатами и пользователями
+        /// </summary>
+        /// <returns>Связанный список</returns>
+        IQueryable<Ticket> GetAllOpenTickets();
+
     }
 }
