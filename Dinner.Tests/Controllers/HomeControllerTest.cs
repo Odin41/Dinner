@@ -14,7 +14,7 @@ namespace Dinner.Tests.Controllers
     public class HomeControllerTest
     {
         [Fact]
-        public void IndexViewResultNotNull()
+        public void IndexView_ResultNotNull()
         {
             //Arrange
             var moq = new Mock<IRepository>();
@@ -39,7 +39,7 @@ namespace Dinner.Tests.Controllers
 
 
         [Fact]
-        public void IndexViewRedirectToLogoutIfUserNotFound()
+        public void IndexView_RedirectToLogout_IfUserNotFound()
         {
             //Arrange
             var moq = new Mock<IRepository>();
@@ -57,7 +57,7 @@ namespace Dinner.Tests.Controllers
         }
 
         [Fact]
-        public void IndexViewRedirectErrorPageIfRoomsEmpty()
+        public void IndexView_RedirectErrorPage_IfRoomsEmpty()
         {
             //Arrange
             var moq = new Mock<IRepository>();
@@ -74,7 +74,7 @@ namespace Dinner.Tests.Controllers
         }
 
         [Fact]
-        public void IndexViewRedirectErrorPageIfDevicesEmpty()
+        public void IndexView_RedirectErrorPage_IfDevicesEmpty()
         {
             //Arrange
             var moq = new Mock<IRepository>();
@@ -91,13 +91,15 @@ namespace Dinner.Tests.Controllers
         }
 
         [Fact]
-        public void IndexGetTicketForUserResultNotNull()
+        public void Index_GetTicketForUser_ResultNotNull()
         {
             //Arrange
             var moq = new Mock<IRepository>();
             moq.Setup(repo => repo.GetUserAsync(null)).ReturnsAsync(GetUser());
-            Ticket returnTicket = GetTicket();
-            moq.Setup(repo => repo.GetUserTicketAsync(GetUser())).ReturnsAsync(GetTicket());
+
+            Ticket resultTicket = GetTicket();
+
+            moq.Setup(repo => repo.GetUserTicketAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(resultTicket);
             HomeController homeController = new HomeController(moq.Object);
 
             //Act
@@ -105,7 +107,45 @@ namespace Dinner.Tests.Controllers
 
             //Assert
             var methodResult = Assert.IsType<Ticket>(result.Result);
-            Assert.Same(methodResult, returnTicket);
+            Assert.Same(methodResult, resultTicket);
+        }
+
+        [Fact]
+        public void Index_GetTicketStatus_IfGetTicketForUserRetunNotNull()
+        {
+            //Arrange
+            var moq = new Mock<IRepository>();
+            moq.Setup(repo => repo.GetUserAsync(null)).ReturnsAsync(GetUser());
+            moq.Setup(repo => repo.GetUserTicketAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(GetTicket());
+            HomeController homeController = new HomeController(moq.Object);
+
+            string resultString_Ru = "Вы 0 в очереди к Device1 в Room1";
+
+            //Act
+            var result = homeController.GetTicketStatus();
+
+            //Assert
+            var methodResult = Assert.IsType<string>(result.Result);
+            Assert.Equal(methodResult, resultString_Ru);
+        }
+
+
+        [Fact]
+        public void Index_GetTicketStatus_IfGetTicketForUserRetunNull()
+        {
+            //Arrange
+            var moq = new Mock<IRepository>();
+            moq.Setup(repo => repo.GetUserAsync(null)).ReturnsAsync(GetUser());
+            HomeController homeController = new HomeController(moq.Object);
+            moq.Setup(repo => repo.GetUserTicketAsync(null)).ReturnsAsync(GetTicket());
+            string resultString_Ru = "Вы не стоите в очереди";
+
+            //Act
+            var result = homeController.GetTicketStatus();
+
+            //Assert
+            var methodResult = Assert.IsType<string>(result.Result);
+            Assert.Equal(methodResult, resultString_Ru);
         }
 
 
@@ -164,12 +204,18 @@ namespace Dinner.Tests.Controllers
 
         private Ticket GetTicket()
         {
+            Room room = new Room { Id = 1, Name = "Room1"};
+            Device dev = new Device { Id = 1, Name = "Device1" };
+            dev.Room = room;
             Ticket ret = new Ticket
             {
                 Id = 1,
                 DeviceId = 1,
                 UserId = "1"
+                
             };
+
+            ret.Device = dev;
 
             return ret;
 
