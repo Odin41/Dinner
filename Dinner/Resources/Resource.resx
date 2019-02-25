@@ -226,7 +226,7 @@
     <value>Информация об очереди:</value>
   </data>
   <data name="QueueManagerHeader" xml:space="preserve">
-    <value>Управление учередью</value>
+    <value>Управление очередью</value>
   </data>
   <data name="QueueNumber" xml:space="preserve">
     <value>Номер в очереди</value>

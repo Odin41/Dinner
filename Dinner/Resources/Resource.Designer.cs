@@ -385,7 +385,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Управление учередью.
+        ///   Ищет локализованную строку, похожую на Управление очередью.
         /// </summary>
         public static string QueueManagerHeader {
             get {
