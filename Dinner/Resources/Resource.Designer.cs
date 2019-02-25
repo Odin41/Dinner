@@ -115,7 +115,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Вы не стоите в очереди.
+        ///   Ищет локализованную строку, похожую на Вы не стоите в очереди..
         /// </summary>
         public static string CheckQueueStatusNotFind {
             get {
@@ -340,6 +340,24 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на К микроволновке.
+        /// </summary>
+        public static string PageMessageToMicrowave {
+            get {
+                return ResourceManager.GetString("PageMessageToMicrowave", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на В комнату.
+        /// </summary>
+        public static string PageMessageToRoom {
+            get {
+                return ResourceManager.GetString("PageMessageToRoom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Пароль.
         /// </summary>
         public static string Password {
@@ -444,6 +462,24 @@ namespace Resources {
         public static string TakeQueue {
             get {
                 return ResourceManager.GetString("TakeQueue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Не удалось встать в очередь..
+        /// </summary>
+        public static string TakeQueueError {
+            get {
+                return ResourceManager.GetString("TakeQueueError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Вы успешно встали в очередь..
+        /// </summary>
+        public static string TakeQueueSuccess {
+            get {
+                return ResourceManager.GetString("TakeQueueSuccess", resourceCulture);
             }
         }
         

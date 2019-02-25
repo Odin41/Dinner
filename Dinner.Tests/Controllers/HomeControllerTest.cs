@@ -91,7 +91,22 @@ namespace Dinner.Tests.Controllers
         }
 
         [Fact]
-        public void Index_GetTicketForUser_ResultNotNull()
+        public void Index_GetTicketForUserAsync_ResultNull()
+        {
+            //Arrange
+            var moq = new Mock<IRepository>();
+            moq.Setup(repo => repo.GetUserAsync(null)).ReturnsAsync(GetEmptyUser());
+            HomeController homeController = new HomeController(moq.Object);
+
+            //Act
+            var result = homeController.GetTicketForUserAsync();
+
+            //Assert
+            Assert.Same(result.Result, null);
+        }
+
+        [Fact]
+        public void Index_GetTicketForUserAsync_ResultNotNull()
         {
             //Arrange
             var moq = new Mock<IRepository>();
@@ -103,26 +118,33 @@ namespace Dinner.Tests.Controllers
             HomeController homeController = new HomeController(moq.Object);
 
             //Act
-            var result = homeController.GetTicketForUser();
+            var result = homeController.GetTicketForUserAsync();
 
             //Assert
             var methodResult = Assert.IsType<Ticket>(result.Result);
             Assert.Same(methodResult, resultTicket);
         }
 
+
+
         [Fact]
-        public void Index_GetTicketStatus_IfGetTicketForUserRetunNotNull()
+        public void Index_GetTicketStatusAsync_IfGetTicketForUserRetunNotNull()
         {
             //Arrange
             var moq = new Mock<IRepository>();
-            moq.Setup(repo => repo.GetUserAsync(null)).ReturnsAsync(GetUser());
-            moq.Setup(repo => repo.GetUserTicketAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(GetTicket());
+
+            ApplicationUser user = GetUser();
+            moq.Setup(repo => repo.GetUserAsync(null)).ReturnsAsync(user);
+
+            Ticket resultTicket = GetTicket();
+
+            moq.Setup(repo => repo.GetUserTicketAsync(user)).ReturnsAsync(resultTicket);
             HomeController homeController = new HomeController(moq.Object);
 
             string resultString_Ru = "Вы 0 в очереди к Device1 в Room1";
 
             //Act
-            var result = homeController.GetTicketStatus();
+            var result = homeController.GetTicketStatusAsync();
 
             //Assert
             var methodResult = Assert.IsType<string>(result.Result);
@@ -131,23 +153,57 @@ namespace Dinner.Tests.Controllers
 
 
         [Fact]
-        public void Index_GetTicketStatus_IfGetTicketForUserRetunNull()
+        public void Index_GetTicketStatusAsync_IfGetTicketForUserRetunNull()
         {
             //Arrange
             var moq = new Mock<IRepository>();
             moq.Setup(repo => repo.GetUserAsync(null)).ReturnsAsync(GetUser());
-            HomeController homeController = new HomeController(moq.Object);
             moq.Setup(repo => repo.GetUserTicketAsync(null)).ReturnsAsync(GetTicket());
-            string resultString_Ru = "Вы не стоите в очереди";
+
+            string resultString = Resources.Resource.CheckQueueStatusNotFind;
+            HomeController homeController = new HomeController(moq.Object);
+            
+            
 
             //Act
-            var result = homeController.GetTicketStatus();
+            var result = homeController.GetTicketStatusAsync();
 
             //Assert
             var methodResult = Assert.IsType<string>(result.Result);
-            Assert.Equal(methodResult, resultString_Ru);
+            Assert.Equal(methodResult, resultString);
         }
 
+
+        [Fact]
+        public void Index_GetTicketNumberInQueueAsync_ReturnNotNull()
+        {
+            //Arrange
+            var moq = new Mock<IRepository>();
+            moq.Setup(repo => repo.GetUserAsync(null)).ReturnsAsync(GetUser());
+            Ticket sendTicket = GetTicket();
+            moq.Setup(repo => repo.GetUserTicketAsync(null)).ReturnsAsync(sendTicket);
+            moq.Setup(repo => repo.GetNumberInQueueAsync(sendTicket)).ReturnsAsync(GetNumberInQueue());
+            string resultString = Resources.Resource.CheckQueueStatusNotFind;
+            HomeController homeController = new HomeController(moq.Object);
+
+            //Act
+            var result = homeController.GetTicketNumberInQueueAsync(sendTicket);
+
+            //Assert
+            var methodResult = Assert.IsType<int>(result.Result);
+            Assert.Equal(methodResult, GetNumberInQueue());
+        }
+
+
+
+
+
+
+
+        private ApplicationUser GetEmptyUser()
+        {
+            return null;
+        }
 
         private ApplicationUser GetUser()
         {
@@ -219,6 +275,12 @@ namespace Dinner.Tests.Controllers
 
             return ret;
 
+        }
+
+
+        private int GetNumberInQueue()
+        {
+            return 1;
         }
     }
 }

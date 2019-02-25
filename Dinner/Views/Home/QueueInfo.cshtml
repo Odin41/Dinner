@@ -1,5 +1,20 @@
-﻿<div id="queue-info" class="row">
+﻿@model Dinner.Models.Ticket
+<div>
     <p>@Resources.Resource.QueueInfoLabel</p>
-    <h4></h4>
-    <a href="#">@Resources.Resource.CheckStatusQueue</a>
+    @{
+        string status = "";
+        if (Model != null && Model.Id > 0)
+        {
+            status = @Resources.Resource.TakeQueueSuccess;
+        }
+        else
+        {
+            status = @Resources.Resource.TakeQueueError;
+        }
+        <div class="row">
+            <p>@status</p>
+        </div>
+    }
+
+
 </div>

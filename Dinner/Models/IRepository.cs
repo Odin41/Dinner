@@ -48,7 +48,20 @@ namespace Dinner.Models
         /// <returns>Список устройств</returns>
         IEnumerable<Device> GetDevices();
 
-        
+        /// <summary>
+        /// Проверяется наличие устройства в базе
+        /// </summary>
+        /// <param name="id">Идентификатор проверяемоо устройства</param>
+        /// <returns>Результат проверки</returns>
+        bool CheckDevice(int id);
+
+        /// <summary>
+        /// Проверяется наличие устройства в базе асинхронно
+        /// </summary>
+        /// <param name="id">Идентификатор проверяемоо устройства</param>
+        /// <returns>Результат проверки</returns>
+        Task<bool> CheckDeviceAsync(int id);
+
         /// <summary>
         /// Создание и сохранение в базу модели Ticket
         /// </summary>

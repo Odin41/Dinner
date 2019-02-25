@@ -136,7 +136,7 @@
     <value>You are  {0}  in line for the {1} in {2}</value>
   </data>
   <data name="CheckQueueStatusNotFind" xml:space="preserve">
-    <value>You are not standing in line</value>
+    <value>You are not standing in line.</value>
   </data>
   <data name="CheckStatusQueue" xml:space="preserve">
     <value>Check queue</value>
@@ -210,6 +210,12 @@
   <data name="ModelIsNotValidError" xml:space="preserve">
     <value>Error in the model.</value>
   </data>
+  <data name="PageMessageToMicrowave" xml:space="preserve">
+    <value>To microwave</value>
+  </data>
+  <data name="PageMessageToRoom" xml:space="preserve">
+    <value>To room</value>
+  </data>
   <data name="Password" xml:space="preserve">
     <value>Password</value>
   </data>
@@ -245,6 +251,12 @@
   </data>
   <data name="TakeQueue" xml:space="preserve">
     <value>To get in line</value>
+  </data>
+  <data name="TakeQueueError" xml:space="preserve">
+    <value>Could not queue up.</value>
+  </data>
+  <data name="TakeQueueSuccess" xml:space="preserve">
+    <value>You have successfully queued.</value>
   </data>
   <data name="UserNotFoundError" xml:space="preserve">
     <value>User: {0} not found.</value>

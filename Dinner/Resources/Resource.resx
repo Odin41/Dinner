@@ -136,7 +136,7 @@
     <value>Вы {0} в очереди к {1} в {2}</value>
   </data>
   <data name="CheckQueueStatusNotFind" xml:space="preserve">
-    <value>Вы не стоите в очереди</value>
+    <value>Вы не стоите в очереди.</value>
   </data>
   <data name="CheckStatusQueue" xml:space="preserve">
     <value>Проверить очередь</value>
@@ -210,6 +210,12 @@
   <data name="ModelIsNotValidError" xml:space="preserve">
     <value>Ошибка в модели.</value>
   </data>
+  <data name="PageMessageToMicrowave" xml:space="preserve">
+    <value>К микроволновке</value>
+  </data>
+  <data name="PageMessageToRoom" xml:space="preserve">
+    <value>В комнату</value>
+  </data>
   <data name="Password" xml:space="preserve">
     <value>Пароль</value>
   </data>
@@ -245,6 +251,12 @@
   </data>
   <data name="TakeQueue" xml:space="preserve">
     <value>Встать в очередь</value>
+  </data>
+  <data name="TakeQueueError" xml:space="preserve">
+    <value>Не удалось встать в очередь.</value>
+  </data>
+  <data name="TakeQueueSuccess" xml:space="preserve">
+    <value>Вы успешно встали в очередь.</value>
   </data>
   <data name="UserNotFoundError" xml:space="preserve">
     <value>Пользователь: {0} не найден.</value>

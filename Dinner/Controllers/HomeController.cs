@@ -94,7 +94,7 @@ namespace Dinner.Controllers
         /// Получение активного билета для пользователя
         /// </summary>
         /// <returns>Билет пользователя.</returns>
-        public async Task<Ticket> GetTicketForUser()
+        public async Task<Ticket> GetTicketForUserAsync()
         {
             Ticket resultTicket = null;
             try
@@ -122,13 +122,13 @@ namespace Dinner.Controllers
         /// <returns>Сообщение стоит/не стоит в очереди пользователь. В случае если стоит указывается номер в очереди и куда занята очередь.</returns>
         [Authorize]
         [HttpGet]
-        public async Task<string> GetTicketStatus()
+        public async Task<string> GetTicketStatusAsync()
         {
-            Ticket ticket = await GetTicketForUser();
+            Ticket ticket = await GetTicketForUserAsync();
             string result = "";
             if (ticket != null)
             {
-                int count = await GetTicketNumberInQueue(ticket);
+                int count = await GetTicketNumberInQueueAsync(ticket);
                 result = string.Format(Resources.Resource.CheckQueueStatusFind, count, ticket.Device.Name, ticket.Device.Room.Name);
                 logger.Info(result);
             }
@@ -146,14 +146,14 @@ namespace Dinner.Controllers
         /// </summary>
         /// <param name="ticket">Билет в очереди</param>
         /// <returns></returns>
-        private async Task<int> GetTicketNumberInQueue(Ticket ticket)
+        public async Task<int> GetTicketNumberInQueueAsync(Ticket ticket)
         {
             int count = -1;
             try
             {
                 if (ticket == null)
                 {
-                    ticket = await GetTicketForUser();
+                    ticket = await GetTicketForUserAsync();
                 }
                 string userName = UserName;
                 logger.Info("Получение номера в очереди для пользователя: " + userName + ".");
@@ -177,10 +177,10 @@ namespace Dinner.Controllers
         /// <returns></returns>
         [Authorize]
         [HttpPost]
-        public async Task<string> TakeAnyQueue()
+        public async Task<ActionResult> TakeAnyQueueAsync()
         {
             logger.Info("Пользователь: " + UserName + " хочет занять очередь к любому устройству.");
-            return await TakeQueue(-1, -1);
+            return await TakeQueueAsync(-1, -1);
         }
 
         /// <summary>
@@ -190,10 +190,15 @@ namespace Dinner.Controllers
         /// <returns></returns>
         [Authorize]
         [HttpPost]
-        public async Task<string> TakeQueueToRoom(int roomId)
+        public async Task<ActionResult> TakeQueueToRoomAsync(int roomId)
         {
             logger.Info("Пользователь: " + UserName + " хочет занять очередь к любому устройству в комнате с идентификатором [ " + roomId + " ]");
-            return await TakeQueue(roomId, -1);
+            if (roomId < 1)
+            {
+                return null;
+            }
+
+            return await TakeQueueAsync(roomId, -1);
         }
 
         /// <summary>
@@ -203,19 +208,24 @@ namespace Dinner.Controllers
         /// <returns></returns>
         [Authorize]
         [HttpPost]
-        public async Task<string> TakeQueueToDevice(int deviceid)
+        public async Task<ActionResult> TakeQueueToDeviceAsync(int deviceid)
         {
             logger.Info("Пользователь: " + UserName + " хочет занять очередь к устройству с идентификатором [ " + deviceid + " ]");
-            return await TakeQueue(-1, deviceid);
+            if (deviceid < 1)
+            {
+                return null;
+            }
+            return await TakeQueueAsync(-1, deviceid);
         }
 
         [Authorize]
         [HttpPost]
-        public async Task<string> TakeQueue(int roomId, int deviceId)
+        private async Task<ActionResult> TakeQueueAsync(int roomId, int deviceId)
         {
+            Ticket ticket = null;
             try
             {
-                Ticket ticket = await GetTicketForUser();
+                ticket = await GetTicketForUserAsync();
 
                 if (ticket == null)
                 {
@@ -224,7 +234,7 @@ namespace Dinner.Controllers
                     if (roomId < 0 && deviceId < 0)
                     {
                         logger.Info("Получение идентификатора устройства с минимальным количеством открытых билетов.");
-                        device = repo.GetDeviceId();
+                        device = await repo.GetDeviceIdAsync();
                         if (device > 0)
                         {
                             logger.Info("Устройства с минимальным количеством открытых билетов успешно получено. Номер устройства [ " + deviceId + " ] .");
@@ -239,7 +249,7 @@ namespace Dinner.Controllers
                     if (roomId > 0 && deviceId < 0)
                     {
                         logger.Info("Получение идентификатора устройства с минимальным количеством открытых билетов в комнате [ " + roomId + " ]");
-                        device = repo.GetDeviceIdByRoom(roomId);
+                        device = await repo.GetDeviceIdByRoomAsync(roomId);
                         if (device > 0)
                         {
                             logger.Info("Устройства с минимальным количеством открытых билетов в комнате [ " + roomId + " ] успешно получено. Номер устройства [ " + deviceId + " ] .");
@@ -253,14 +263,15 @@ namespace Dinner.Controllers
                     //Встать в очередь к определенному устройству в комнате
                     if (roomId < 0 && deviceId > 0)
                     {
-                        if (device > 0)
-                        {
-                            device = deviceId;
-                        }
-                        else
+                        if (deviceId < 0)
                         {
                             logger.Error("Номер устройства не может быть меньше 1.");
-                            RedirectToAction("Index");
+                            return RedirectToAction("Index");
+                        }
+
+                        if (await repo.CheckDeviceAsync(deviceId))
+                        {
+                            device = deviceId;
                         }
                     }
 
@@ -273,7 +284,7 @@ namespace Dinner.Controllers
                         DateTime createTime = DateTime.Now;
 
                         logger.Info("Создание билета с параметрами : DeviceId=" + device + ", UserId=" + appUser.Id + ", CreateTime=" + createTime + " .");
-                        Ticket createdTicket = new Ticket()
+                        Ticket newTicket = new Ticket()
                         {
                             DeviceId = device,
                             UserId = appUser.Id,
@@ -282,17 +293,20 @@ namespace Dinner.Controllers
 
 
                         logger.Info("Создание нового билета в базе.");
-                        repo.CreateTicket(createdTicket);
+                        repo.CreateTicket(newTicket);
                         repo.Save();
+
+                        ticket = newTicket;
                     }
                 }
             }
             catch (Exception e)
             {
-                ShowErrorPage(e.Message, "HomeController", "TakeQueue");
+                return ShowErrorPage(e.Message, "HomeController", "TakeQueue");
             }
 
-            return await GetTicketStatus();
+
+            return PartialView("QueueInfo", ticket);
         }
 
 
