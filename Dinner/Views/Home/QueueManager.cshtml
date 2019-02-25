@@ -1,50 +1,51 @@
-﻿
-<div class="row">
-    <h4>@Resources.Resource.TakeQueue</h4>
+﻿<h4>@Resources.Resource.TakeQueue</h4>
+
+
+<div id="queue-info">
+    @*@Html.Partial("QueueInfo")*@
+</div>
+
+<div>
     <a class="take-queue-any  btn btn-default" href="#">@Resources.Resource.TakeQueue</a>
 </div>
-    <div class="row">
+<div>
 
-        @helper RoomsList(IEnumerable<Dinner.Models.Room> rooms)
-        {
-            <div class="list-group col-md-4">
-                <h5>@Resources.Resource.PageMessageToRoom</h5>
-                @foreach (Dinner.Models.Room r in rooms)
-                {
-
-                    <a class="take-queue-room list-group-item list-group-item-action" href="#" data-roomid=@r.Id>@r.Name</a>
-
-                }
-            </div>
-        }
-
-        @helper DevicesList(IEnumerable<Dinner.Models.Device> devices)
-        {
-
-            <div class="list-group col-md-4">
-                <h5>@Resources.Resource.PageMessageToMicrowave</h5>
-                @foreach (Dinner.Models.Device d in devices)
-                {
-
-                    <a class="take-queue-device list-group-item list-group-item-action" href="#" data-deviceid=@d.Id>@d.Name @d.Room.Name</a>
-
-                }
-            </div>
-        }
-
-
-
-
-        @{ 
-            if (ViewBag.rooms != null)
+    @helper RoomsList(IEnumerable<Dinner.Models.Room> rooms)
+    {
+        <div class="list-group  col-md-4">
+            <h5>@Resources.Resource.PageMessageToRoom</h5>
+            @foreach (Dinner.Models.Room r in rooms)
             {
-                @RoomsList(ViewBag.rooms)
+                <a class="take-queue-room list-group-item list-group-item-action" href="#" data-roomid=@r.Id>@r.Name</a>
             }
+        </div>
+    }
 
-            if (ViewBag.devices != null)
+    @helper DevicesList(IEnumerable<Dinner.Models.Device> devices)
+    {
+
+        <div class="list-group col-md-4">
+            <h5>@Resources.Resource.PageMessageToMicrowave</h5>
+            @foreach (Dinner.Models.Device d in devices)
             {
-                @DevicesList(ViewBag.devices)
+                <a class="take-queue-device list-group-item list-group-item-action" href="#" data-deviceid=@d.Id>@d.Name @d.Room.Name</a>
             }
+        </div>
+    }
+
+
+
+
+    @{
+        if (ViewBag.rooms != null)
+        {
+            @RoomsList(ViewBag.rooms)
         }
-    </div>
+
+        if (ViewBag.devices != null)
+        {
+            @DevicesList(ViewBag.devices)
+        }
+    }
+</div>
 

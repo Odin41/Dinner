@@ -1,19 +1,16 @@
 ﻿@{
     ViewBag.Title = @Resources.Resource.HomePageTitle;
 }
+<div class="container">
+        <p>@Resources.Resource.QueueInfoLabel</p>
+        <div>
+            <a id="check-queue" href="#" class="btn btn-primary">@Resources.Resource.CheckStatusQueue</a>
+            <h4 id="check-queue-result"></h4>
+        </div>
 
-<div class="row">
-    <div class="row">
-        <a id="check-queue" href="#" class="btn btn-default active">@Resources.Resource.CheckStatusQueue</a>
-        <h4 id="check-queue-result"></h4>
-    </div>
-    
-    <div id="queue-info" class="row col-md-4">
-        @Html.Partial("QueueInfo")
-    </div>
-    <div class="row">
-        @Html.Partial("QueueManager")
-    </div>
+        <div>
+            @Html.Partial("QueueManager")
+        </div>
 </div>
     @section Scripts {
         <script>
@@ -23,7 +20,7 @@
                         url: '/Home/GetTicketStatusAsync',
                         type: 'GET',
                         success: function (data) {
-                            $('#check-queue-result').text(data);
+                            $('#check-queue-result').html(data);
                         }
                     });
                     e.preventDefault();

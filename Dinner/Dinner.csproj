@@ -301,6 +301,7 @@
     <Content Include="Views\QueueManager\Index.cshtml" />
     <Content Include="Views\Home\QueueInfo.cshtml" />
     <Content Include="Views\Home\QueueManager.cshtml" />
+    <Content Include="Views\Home\TicketInfo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

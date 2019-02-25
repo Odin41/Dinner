@@ -1,18 +1,23 @@
 ﻿@model Dinner.Models.Ticket
+
 <div>
-    <p>@Resources.Resource.QueueInfoLabel</p>
+    
     @{
         string status = "";
+        string statusClass = "";
         if (Model != null && Model.Id > 0)
         {
             status = @Resources.Resource.TakeQueueSuccess;
+            statusClass = "alert alert-success";
         }
         else
         {
             status = @Resources.Resource.TakeQueueError;
+            statusClass = "alert alert-danger";
         }
+
         <div class="row">
-            <p>@status</p>
+            <p class="@statusClass">@status</p>
         </div>
     }
 

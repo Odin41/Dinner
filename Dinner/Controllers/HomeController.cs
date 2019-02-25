@@ -122,13 +122,17 @@ namespace Dinner.Controllers
         /// <returns>Сообщение стоит/не стоит в очереди пользователь. В случае если стоит указывается номер в очереди и куда занята очередь.</returns>
         [Authorize]
         [HttpGet]
-        public async Task<string> GetTicketStatusAsync()
+        public async Task<ActionResult> GetTicketStatusAsync()
         {
             Ticket ticket = await GetTicketForUserAsync();
             string result = "";
             if (ticket != null)
             {
                 int count = await GetTicketNumberInQueueAsync(ticket);
+                ViewData["TicketNumber"] = count;
+                ViewData["DeviceName"] = ticket.Device.Name;
+                ViewData["RoomName"] = ticket.Device.Room.Name;
+
                 result = string.Format(Resources.Resource.CheckQueueStatusFind, count, ticket.Device.Name, ticket.Device.Room.Name);
                 logger.Info(result);
             }
@@ -138,7 +142,8 @@ namespace Dinner.Controllers
                 result = Resources.Resource.CheckQueueStatusNotFind;
                 logger.Info(result);
             }
-            return result;
+           
+            return PartialView("TicketInfo", ticket);
         }
 
         /// <summary>
@@ -298,6 +303,7 @@ namespace Dinner.Controllers
 
                         ticket = newTicket;
                     }
+                    return PartialView("QueueInfo", ticket); 
                 }
             }
             catch (Exception e)
@@ -305,10 +311,8 @@ namespace Dinner.Controllers
                 return ShowErrorPage(e.Message, "HomeController", "TakeQueue");
             }
 
-
-            return PartialView("QueueInfo", ticket);
+            return PartialView("QueueInfo", null);
         }
-
 
         public ActionResult ChangeCulture(string lang)
         {

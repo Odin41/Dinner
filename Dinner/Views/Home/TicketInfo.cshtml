@@ -1,0 +1,18 @@
+﻿@model Dinner.Models.Ticket
+
+<div class="panel panel-primary" style="width: 20rem;">
+    <div class="panel-heading">
+        <h5 class="panel-title">
+            Информация о билете
+        </h5>
+    </div>
+    <div class="panel-body">
+        <h6 class="text-muted">Номер в очереди</h6>
+        <h4 class="text-center">@ViewData["TicketNumber"]</h4>
+        <h6 class="text-muted">Очередь в комнату</h6>
+        <h5>@ViewData["RoomName"]</h5>
+        <h6 class="text-muted">К устройству</h6>
+        <h5>@ViewData["DeviceName"]</h5>
+    </div>
+</div>
+
