@@ -1,0 +1,81 @@
+﻿@{
+    ViewBag.Title = @Resources.Resource.HomePageTitle;
+}
+<div class="container">
+    <h4>@Resources.Resource.QueueInfoLabel</h4>
+    <div>
+        <a id="check-queue" href="#" class="btn btn-primary">@Resources.Resource.CheckStatusQueue</a>
+        <h4 id="check-queue-result"></h4>
+    </div>
+
+    <div>
+        @Html.Partial("QueueManager")
+
+        <div class="row">
+            <a class="take-queue-room  btn btn-default" href="#" data-roomid="-1">Комната -1</a>
+            <a class="take-queue-room  btn btn-default" href="#" data-roomid="ааа">Комната аааа</a>
+
+            <a class="take-queue-device  btn btn-default" href="#" data-deviceid="-1">Устройство -1</a>
+            <a class="take-queue-device  btn btn-default" href="#" data-deviceid="аааа">Устройство аааа</a>
+        </div>
+    </div>
+
+   
+ </div>
+    @section Scripts {
+        <script>
+            $(document).ready(function () {
+                $('#check-queue').click(function (e) {
+                    $.ajax({
+                        url: '/Home/GetTicketStatusAsync',
+                        type: 'GET',
+                        success: function (data) {
+                            $('#check-queue-result').html(data);
+                        }
+                    });
+                    e.preventDefault();
+                    e.stopPropagation();
+                });
+
+                $('.take-queue-any').click(function (e) {
+                    TakeQueue('/Home/TakeAnyQueueAsync', {});
+                    e.stopPropagation();
+                    e.preventDefault();
+                });
+
+
+
+                $('.take-queue-room').click(function (e) {
+                    var data = {
+                        roomid: $(this).attr("data-roomid")
+                    };
+                    TakeQueue('/Home/TakeQueueToRoomAsync',
+                        data);
+                    e.stopPropagation();
+                    e.preventDefault();
+                });
+
+                $('.take-queue-device').click(function (e) {
+                    var data = {
+                        deviceid: $(this).attr("data-deviceid")
+                    };
+                    TakeQueue('/Home/TakeQueueToDeviceAsync',
+                        data);
+                    e.stopPropagation();
+                    e.preventDefault();
+                });
+
+                function TakeQueue(url, data) {
+                    $.ajax({
+                        url: url,
+                        type: 'POST',
+                        data: data,
+                        success: function (data) {
+                            $('#queue-info').html(data);
+                        }
+                    });
+                }
+            });
+
+        </script>
+    }

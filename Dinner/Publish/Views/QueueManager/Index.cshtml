@@ -1,0 +1,35 @@
+﻿@model IEnumerable<Dinner.Models.Ticket>
+@{
+    ViewBag.Title = @Resources.Resource.QueueManagerHeader;
+}
+
+<h2>@Resources.Resource.QueueManagerHeader</h2>
+
+<div>
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <td width="20%">@Resources.Resource.UserTableHeaderLabel</td>
+                <td width="10%">@Resources.Resource.RoomTableHeaderLabel</td>
+                <td width="20%">@Resources.Resource.DeviceTableHeaderLabel</td>
+                <td width="20%">@Resources.Resource.CreatedTimeTableHeaderLabel</td>
+                <td width="20%">@Resources.Resource.ClosedTimeTableHeaderLabel</td>
+                <td width="10%">@Resources.Resource.ActionTableHeaderLabel</td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.User.UserName)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Device.Room.Name)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Device.Name)</td>
+                    <td>@Html.DisplayFor(modelItem => item.CreateTime)</td>
+                    <td>@Html.DisplayFor(modelItem => item.CloseTime)</td>
+                    <td>@Html.ActionLink(@Resources.Resource.ButtonCloseLabel, "CloseTicket", new { id = item.Id })</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>

@@ -1,0 +1,41 @@
+﻿@model Dinner.Models.RegisterModel
+@{
+    ViewBag.Title = @Resources.Resource.RegisterPageTitle;
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+<div>
+    <h4>@Resources.Resource.RegisterPageTitle</h4>
+    <hr />
+    @Html.ValidationSummary(false)
+    <div>
+        @Resources.Resource.Email
+    </div>
+    <div>
+        @Html.EditorFor(model => model.Email)
+    </div>
+    <div>
+        @Resources.Resource.Password
+    </div>
+    <div>
+        @Html.EditorFor(model => model.Password)
+    </div>
+    <div>
+        @Resources.Resource.ConfirmPassword
+    </div>
+    <div>
+        @Html.EditorFor(model => model.PasswordConfirm)
+    </div>
+    <div>
+        <div>
+            <input type="submit" value="@Resources.Resource.RegisterButtonLabel" />
+        </div>
+    </div>
+
+
+</div>
+
+}
+
