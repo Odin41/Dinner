@@ -11,13 +11,17 @@
         <h1>@Resources.Resource.ErrorPageHeader</h1>
         <h2>@Resources.Resource.ErrorPageMessage</h2>
     </hgroup>
+
+    @if (Model != null)
+    {
+
     <p><b>Controller</b></p>
     <h4>@Model.ControllerName</h4>
     <p><b>Action</b></p>
     <p>@Model.ActionName</p>
     <p><b>Error</b></p>
     <p>@Model.Exception</p>
-
+    }
     @Html.ActionLink(Resources.Resource.ErrorPageReturnUrl, "Index")
 </body>
 </html>

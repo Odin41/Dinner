@@ -210,12 +210,6 @@
   <data name="ModelIsNotValidError" xml:space="preserve">
     <value>Error in the model.</value>
   </data>
-  <data name="PageMessageToMicrowave" xml:space="preserve">
-    <value>To microwave</value>
-  </data>
-  <data name="PageMessageToRoom" xml:space="preserve">
-    <value>To room</value>
-  </data>
   <data name="Password" xml:space="preserve">
     <value>Password</value>
   </data>
@@ -233,6 +227,9 @@
   </data>
   <data name="QueueManagerHeader" xml:space="preserve">
     <value>Queue manager</value>
+  </data>
+  <data name="QueueNumber" xml:space="preserve">
+    <value>Queue number</value>
   </data>
   <data name="RegisterButtonLabel" xml:space="preserve">
     <value>Register</value>
@@ -257,6 +254,15 @@
   </data>
   <data name="TakeQueueSuccess" xml:space="preserve">
     <value>You have successfully queued.</value>
+  </data>
+  <data name="TakeQueueToMicrowave" xml:space="preserve">
+    <value>To microwave</value>
+  </data>
+  <data name="TakeQueueToRoom" xml:space="preserve">
+    <value>To room</value>
+  </data>
+  <data name="TicketInformationLabel" xml:space="preserve">
+    <value>Ticket Information</value>
   </data>
   <data name="UserNotFoundError" xml:space="preserve">
     <value>User: {0} not found.</value>

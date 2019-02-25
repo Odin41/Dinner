@@ -13,7 +13,7 @@
     @helper RoomsList(IEnumerable<Dinner.Models.Room> rooms)
     {
         <div class="list-group  col-md-4">
-            <h5>@Resources.Resource.PageMessageToRoom</h5>
+            <h5>@Resources.Resource.TakeQueueToRoom</h5>
             @foreach (Dinner.Models.Room r in rooms)
             {
                 <a class="take-queue-room list-group-item list-group-item-action" href="#" data-roomid=@r.Id>@r.Name</a>
@@ -25,7 +25,7 @@
     {
 
         <div class="list-group col-md-4">
-            <h5>@Resources.Resource.PageMessageToMicrowave</h5>
+            <h5>@Resources.Resource.TakeQueueToMicrowave</h5>
             @foreach (Dinner.Models.Device d in devices)
             {
                 <a class="take-queue-device list-group-item list-group-item-action" href="#" data-deviceid=@d.Id>@d.Name @d.Room.Name</a>

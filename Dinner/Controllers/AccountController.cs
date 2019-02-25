@@ -28,6 +28,14 @@ namespace Dinner.Controllers
             return View("Error", new HandleErrorInfo(new Exception(message), controllerName, action));
         }
 
+        string UserName
+        {
+            get
+            {
+                return HttpContext?.User.Identity.Name;
+            }
+        }
+
         private IAuthenticationManager AuthenticationManager
         {
             get
@@ -53,7 +61,7 @@ namespace Dinner.Controllers
         {
 
             logger.Info("Получение формы диалога авторизации по переходу со страницы " + returnUrl + ".");
-            
+            ViewBag.userName = UserName;
             ViewBag.returnUrl = returnUrl;
             return View("Login");
         }
@@ -144,6 +152,7 @@ namespace Dinner.Controllers
 
         public ActionResult Register()
         {
+            ViewBag.userName = UserName;
             logger.Info("Отображение формы диалога регистрации.");
             return View("Register");
         }

@@ -196,43 +196,33 @@ namespace Dinner.Models
             int result = -1;
             try
             {
-                logger.Info("Получение открытых билетов.");
-                var tickets = id == null || id < 0 ? 
-                    db.Tickets.Where(t => t.CloseTime == null) : //Выборка открытых билетов для всех устройств
-                    db.Tickets.Where(t => t.Device.RoomId == id && t.CloseTime == null); //Выборка открытых билетов в указанной комнате
+                logger.Info("Получение устройств с билетами.");
 
-                if (tickets != null && tickets.Count() > 0)
+                var devices = id == null || id < 0 ? db.Devices.Include(dt => dt.Tickets)
+                  : db.Devices.Include(dt => dt.Tickets).Where(d => d.RoomId == id);
+
+                if (devices != null && devices.Count() > 0)
                 {
-                    logger.Info("Получение открытых билетов успешно завершено.");
-
-                    logger.Info("Группировка полученных данных по идентификатору устройства.");
-                    var groupTickets = tickets.GroupBy(d => d.DeviceId); //группировка по устройству
-
-                    logger.Info("Группировка полученных данных по идентификатору устройства успешно завершено. Количество полученных записей: " + groupTickets.Count());
-
-                    logger.Info("Создание нового типа с полями key, count.");
-                    var groupDevices = groupTickets.Select(gd => new //создаие нового объекта (deviceid, ticetsCount)
+                    var selDevice = devices.Select(d => new
                     {
-                        gd.Key,
-                        Count = gd.Count()
+                        d.Id,
+                        Count = d.Tickets.Where(t => t.CloseTime == null).Count()
                     });
-                    logger.Info("Создание нового типа с полями key, count успешно завершено.");
 
-                    logger.Info("Сортировка полученных данных.");
-                    var sortingDevices = groupDevices.OrderBy(sd => sd.Count); //сортировка по возрастанию 
+                    logger.Info("Получение устройств с открытыми билетами успешно завершено.");
+
+                    logger.Info("Сортировка полученных данных по количеству открытых билетов на устройство.");
+                    var sortingDevices = selDevice.OrderBy(sd => sd.Count); //сортировка по возрастанию 
                     logger.Info("Сортировка полученных данных успешно завершено.");
 
-
-
-                    logger.Info("Получение первой записи из из отсортированных данных.");
+                    logger.Info("Получение первой записи из отсортированных данных.");
                     var device = sortingDevices.FirstOrDefault();
-
 
                     if (device != null)
                     {
                         logger.Info("Получение первой записи из отсортированных данных успешно завершено.");
-                        logger.Info("Получен идентификатор устройства [ " + device.Key + " ] с минимальным поличеством записей [ " + device.Count + " ].");
-                        result = device.Key;
+                        logger.Info("Получен идентификатор устройства [ " + device.Id + " ] с минимальным поличеством записей [ " + device.Count + " ].");
+                        result = device.Id;
                     }
                     else
                     {
@@ -271,42 +261,33 @@ namespace Dinner.Models
             try
             {
 
-                logger.Info("Получение открытых билетов.");
-                var tickets = id == null || id < 0 ? db.Tickets.Where(t => t.CloseTime == null) : //Выборка открытых билетов для всех устройств
-                    db.Tickets.Where(t => t.Device.RoomId == id && t.CloseTime == null); //Выборка открытых билетов в указанной комнате
+                logger.Info("Получение устройств с билетами.");
 
-                if (tickets != null && tickets.Count() > 0)
+                var devices = id == null || id < 0 ? db.Devices.Include(dt => dt.Tickets)
+                  : db.Devices.Include(dt => dt.Tickets).Where(d => d.RoomId == id) ;
+
+                if (devices != null && devices.Count() > 0)
                 {
-                    logger.Info("Получение открытых билетов успешно завершено.");
-
-                    logger.Info("Группировка полученных данных по идентификатору устройства.");
-                    var groupTickets = tickets.GroupBy(d => d.DeviceId); //группировка по устройству
-
-                    logger.Info("Группировка полученных данных по идентификатору устройства успешно завершено. Количество полученных записей: " + groupTickets.Count());
-
-                    logger.Info("Создание нового типа с полями key, count.");
-                    var groupDevices = groupTickets.Select(gd => new //создаие нового объекта (deviceid, ticetsCount)
+                    var selDevice = devices.Select(d => new
                     {
-                        gd.Key,
-                        Count = gd.Count()
+                        d.Id,
+                        Count = d.Tickets.Where(t => t.CloseTime == null).Count()
                     });
-                    logger.Info("Создание нового типа с полями key, count успешно завершено.");
 
-                    logger.Info("Сортировка полученных данных.");
-                    var sortingDevices = groupDevices.OrderBy(sd => sd.Count); //сортировка по возрастанию 
+                    logger.Info("Получение устройств с открытыми билетами успешно завершено.");
+
+                    logger.Info("Сортировка полученных данных по количеству открытых билетов на устройство.");
+                    var sortingDevices = selDevice.OrderBy(sd => sd.Count); //сортировка по возрастанию 
                     logger.Info("Сортировка полученных данных успешно завершено.");
 
-
-
-                    logger.Info("Получение первой записи из из отсортированных данных.");
+                    logger.Info("Получение первой записи из отсортированных данных.");
                     var device = await sortingDevices.FirstOrDefaultAsync();
-
 
                     if (device != null)
                     {
                         logger.Info("Получение первой записи из отсортированных данных успешно завершено.");
-                        logger.Info("Получен идентификатор устройства [ " + device.Key + " ] с минимальным поличеством записей [ " + device.Count + " ].");
-                        result = device.Key;
+                        logger.Info("Получен идентификатор устройства [ " + device.Id + " ] с минимальным поличеством записей [ " + device.Count + " ].");
+                        result = device.Id;
                     }
                     else
                     {
@@ -321,10 +302,6 @@ namespace Dinner.Models
                     Task<Device> device = id == null || id < 0 ?
                         db.Devices.FirstOrDefaultAsync() :
                         db.Devices.Where(d => d.RoomId == id).FirstOrDefaultAsync();
-
-                    
-
-
 
                     logger.Info("Устройство удовлетворяющее запрос успешно получено. Илдентификатор полученного устройства: " + device.Result.Id + ".");
                     result = device.Result.Id;

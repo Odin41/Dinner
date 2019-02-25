@@ -210,12 +210,6 @@
   <data name="ModelIsNotValidError" xml:space="preserve">
     <value>Ошибка в модели.</value>
   </data>
-  <data name="PageMessageToMicrowave" xml:space="preserve">
-    <value>К микроволновке</value>
-  </data>
-  <data name="PageMessageToRoom" xml:space="preserve">
-    <value>В комнату</value>
-  </data>
   <data name="Password" xml:space="preserve">
     <value>Пароль</value>
   </data>
@@ -233,6 +227,9 @@
   </data>
   <data name="QueueManagerHeader" xml:space="preserve">
     <value>Управление учередью</value>
+  </data>
+  <data name="QueueNumber" xml:space="preserve">
+    <value>Номер в очереди</value>
   </data>
   <data name="RegisterButtonLabel" xml:space="preserve">
     <value>Зарегистрировать</value>
@@ -257,6 +254,15 @@
   </data>
   <data name="TakeQueueSuccess" xml:space="preserve">
     <value>Вы успешно встали в очередь.</value>
+  </data>
+  <data name="TakeQueueToMicrowave" xml:space="preserve">
+    <value>К микроволновке</value>
+  </data>
+  <data name="TakeQueueToRoom" xml:space="preserve">
+    <value>В комнату</value>
+  </data>
+  <data name="TicketInformationLabel" xml:space="preserve">
+    <value>Информация о билете</value>
   </data>
   <data name="UserNotFoundError" xml:space="preserve">
     <value>Пользователь: {0} не найден.</value>

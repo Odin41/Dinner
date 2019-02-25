@@ -60,34 +60,42 @@ namespace Dinner.Controllers
 
                 if (repo.GetRooms().Count() == 0)
                 {
-                    return ShowErrorPage(Resources.Resource.RoomTableEmptyError, "HomeController", "Index");
+                    return WriteError(Resources.Resource.RoomTableEmptyError, "HomeController", "Index");
                 }
                 ViewBag.rooms = repo.GetRooms();
                 if (repo.GetDevices().Count() == 0)
                 {
-                    return ShowErrorPage(Resources.Resource.DeviceTableEmptyError, "HomeController", "Index");
+                   return WriteError(Resources.Resource.DeviceTableEmptyError, "HomeController", "Index");
                 }
                 ViewBag.devices = repo.GetDevices();
 
             }
             catch (InvalidOperationException ex)
             {
-                return ShowErrorPage(string.Format(Resources.Resource.ErrorOnThePageMessage, @"Home\Index") + ex.Message, "HomeController", "Index");
+                return WriteError(string.Format(Resources.Resource.ErrorOnThePageMessage, @"Home\Index") + ex.Message, "HomeController", "Index");
             }
 
             catch (System.Data.Entity.Migrations.Infrastructure.AutomaticMigrationsDisabledException e)
             {
-                return ShowErrorPage(string.Format(Resources.Resource.DataBaseErrorMessage,
+                return WriteError(string.Format(Resources.Resource.DataBaseErrorMessage,
                     Resources.Resource.DataBaseNeedMigrationMessage) + e.Message, "HomeController", "Index");
+                
             }
             return View("Index");
         }
 
+
+        //[HandleError(ExceptionType = typeof(Exception), View = "Error")]
         [HttpGet]
-        private ActionResult ShowErrorPage(string message, string controllerName, string action)
+        private ActionResult WriteError(string message, string controllerName, string action)
         {
-            logger.Error(message);
-            return View("Error", new HandleErrorInfo(new Exception(message), controllerName, action));
+           logger.Error(message);
+           //HandleErrorInfo ex = new HandleErrorInfo(new Exception(message), controllerName, action);
+            // throw new Exception(message);
+            //View("Error", ex);
+           
+            return new HttpStatusCodeResult(500);
+
         }
 
         /// <summary>
@@ -111,7 +119,7 @@ namespace Dinner.Controllers
             }
             catch(Exception ex)
             {
-                ShowErrorPage("Ошибка выполнения метода получения билета для пользователя." + ex.Message, "Home", "GetTicketForUser");
+                WriteError("Ошибка выполнения метода получения билета для пользователя." + ex.Message, "Home", "GetTicketForUser");
             }
             return resultTicket;
         }
@@ -151,6 +159,7 @@ namespace Dinner.Controllers
         /// </summary>
         /// <param name="ticket">Билет в очереди</param>
         /// <returns></returns>
+        [HttpPost]
         public async Task<int> GetTicketNumberInQueueAsync(Ticket ticket)
         {
             int count = -1;
@@ -171,7 +180,7 @@ namespace Dinner.Controllers
             }
             catch (Exception ex)
             {
-                ShowErrorPage("Ошибка выполнения метода получение номера в очереди к устройству." + ex.Message, "Home", "GetTicketNumberInQueue");
+                WriteError("Ошибка выполнения метода получение номера в очереди к устройству." + ex.Message, "Home", "GetTicketNumberInQueue");
             }
             return count;
         }
@@ -197,12 +206,13 @@ namespace Dinner.Controllers
         [HttpPost]
         public async Task<ActionResult> TakeQueueToRoomAsync(int roomId)
         {
-            logger.Info("Пользователь: " + UserName + " хочет занять очередь к любому устройству в комнате с идентификатором [ " + roomId + " ]");
+            
             if (roomId < 1)
             {
+                logger.Warn("Пользователь: " + UserName + " хочет занять очередь к любому устройству в комнате с идентификатором [ " + roomId + " ]");
                 return null;
             }
-
+            logger.Info("Пользователь: " + UserName + " хочет занять очередь к любому устройству в комнате с идентификатором [ " + roomId + " ]");
             return await TakeQueueAsync(roomId, -1);
         }
 
@@ -215,16 +225,16 @@ namespace Dinner.Controllers
         [HttpPost]
         public async Task<ActionResult> TakeQueueToDeviceAsync(int deviceid)
         {
-            logger.Info("Пользователь: " + UserName + " хочет занять очередь к устройству с идентификатором [ " + deviceid + " ]");
+           
             if (deviceid < 1)
             {
+                logger.Warn("Пользователь: " + UserName + " хочет занять очередь к устройству с идентификатором [ " + deviceid + " ]");
                 return null;
             }
+            logger.Info("Пользователь: " + UserName + " хочет занять очередь к устройству с идентификатором [ " + deviceid + " ]");
             return await TakeQueueAsync(-1, deviceid);
         }
 
-        [Authorize]
-        [HttpPost]
         private async Task<ActionResult> TakeQueueAsync(int roomId, int deviceId)
         {
             Ticket ticket = null;
@@ -303,15 +313,14 @@ namespace Dinner.Controllers
 
                         ticket = newTicket;
                     }
-                    return PartialView("QueueInfo", ticket); 
+                    return PartialView("QueueInfo", ticket);
                 }
+                return null;
             }
             catch (Exception e)
             {
-                return ShowErrorPage(e.Message, "HomeController", "TakeQueue");
+                return WriteError(e.Message, "HomeController", "TakeQueue");
             }
-
-            return PartialView("QueueInfo", null);
         }
 
         public ActionResult ChangeCulture(string lang)
@@ -344,15 +353,15 @@ namespace Dinner.Controllers
 
         protected override void Dispose(bool disposing)
         {
-            logger.Info("Освобождение контролера HomeController.");
+            //logger.Info("Освобождение контролера HomeController.");
             if (disposing)
             {
-                logger.Info("Освобождение объекта IRepository.");
+                //logger.Info("Освобождение объекта IRepository.");
                 repo.Dispose();
-                logger.Info("Освобождение объекта IRepository завершено.");
+                //logger.Info("Освобождение объекта IRepository завершено.");
             }
             base.Dispose(disposing);
-            logger.Info("Освобождение контролера HomeController завершено.");
+            //logger.Info("Освобождение контролера HomeController завершено.");
         }
 
     }

@@ -340,24 +340,6 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на К микроволновке.
-        /// </summary>
-        public static string PageMessageToMicrowave {
-            get {
-                return ResourceManager.GetString("PageMessageToMicrowave", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Ищет локализованную строку, похожую на В комнату.
-        /// </summary>
-        public static string PageMessageToRoom {
-            get {
-                return ResourceManager.GetString("PageMessageToRoom", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Ищет локализованную строку, похожую на Пароль.
         /// </summary>
         public static string Password {
@@ -408,6 +390,15 @@ namespace Resources {
         public static string QueueManagerHeader {
             get {
                 return ResourceManager.GetString("QueueManagerHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Номер в очереди.
+        /// </summary>
+        public static string QueueNumber {
+            get {
+                return ResourceManager.GetString("QueueNumber", resourceCulture);
             }
         }
         
@@ -480,6 +471,33 @@ namespace Resources {
         public static string TakeQueueSuccess {
             get {
                 return ResourceManager.GetString("TakeQueueSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на К микроволновке.
+        /// </summary>
+        public static string TakeQueueToMicrowave {
+            get {
+                return ResourceManager.GetString("TakeQueueToMicrowave", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на В комнату.
+        /// </summary>
+        public static string TakeQueueToRoom {
+            get {
+                return ResourceManager.GetString("TakeQueueToRoom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Информация о билете.
+        /// </summary>
+        public static string TicketInformationLabel {
+            get {
+                return ResourceManager.GetString("TicketInformationLabel", resourceCulture);
             }
         }
         
