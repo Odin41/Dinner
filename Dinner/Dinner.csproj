@@ -437,6 +437,10 @@
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ApiGroup.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\Api.cshtml" />
     <Content Include="NLog.config" />
+    <Content Include="docs\Install.doc" />
+    <Content Include="docs\Время затраченное на тестовое задание.doc" />
+    <Content Include="docs\Инструкция по использованию.doc" />
+    <Content Include="docs\Тестовое задание на C# %281%29.pdf" />
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
     </None>
