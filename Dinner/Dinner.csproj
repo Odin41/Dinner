@@ -442,7 +442,6 @@
     </None>
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
-    <Content Include="Publish.zip" />
     <Content Include="Publish\Areas\HelpPage\Views\Help\Api.cshtml" />
     <Content Include="Publish\Areas\HelpPage\Views\Help\DisplayTemplates\ApiGroup.cshtml" />
     <Content Include="Publish\Areas\HelpPage\Views\Help\DisplayTemplates\CollectionModelDescription.cshtml" />
@@ -482,7 +481,6 @@
     <Content Include="Publish\fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="Publish\NLog.config" />
     <Content Include="Publish\PrecompiledApp.config" />
-    <Content Include="Publish\Publish.zip" />
     <Content Include="Publish\Scripts\jquery-3.3.1.min.map" />
     <Content Include="Publish\Scripts\jquery-3.3.1.slim.min.map" />
     <Content Include="Publish\Views\Account\Login.cshtml" />
